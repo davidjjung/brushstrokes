@@ -1,0 +1,37 @@
+modLoader = "javafml"
+loaderVersion = "[47,)"
+issueTrackerURL = ""
+license = "MIT License"
+
+[[mods]]
+modId = "brushstrokes"
+version = "${file.jarVersion}"
+logoFile = "logo.png"
+itemIcon = "create:super_glue"
+configBackground = "minecraft:textures/block/dirt.png"
+authors = "DavigJ"
+credits = "asof"
+displayURL = ""
+displayName = "Brush Strokes"
+description = '''Modifies Create's super glue to a glue brush, as well as adding wax brushes.'''
+
+[[dependencies.brushstrokes]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20.1,1.21)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.brushstrokes]]
+modId = "forge"
+mandatory = true
+versionRange = "[47.1.3,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.brushstrokes]]
+modId = "create"
+mandatory = true
+versionRange = "[6.0.0,)"
+ordering = "AFTER"
+side = "BOTH"
