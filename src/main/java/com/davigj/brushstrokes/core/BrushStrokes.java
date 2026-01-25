@@ -4,6 +4,7 @@ import com.davigj.brushstrokes.client.SelectionHandler;
 import com.davigj.brushstrokes.core.registry.BSCreativePlacements;
 import com.davigj.brushstrokes.core.registry.BSItems;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.server.packs.repository.Pack;
@@ -77,5 +78,9 @@ public class BrushStrokes {
                 event.addRepositorySource((consumer) -> consumer.accept(packInfo));
             }
         }
+    }
+
+    public static ResourceLocation asResource(String path) {
+        return new ResourceLocation(MOD_ID, path);
     }
 }

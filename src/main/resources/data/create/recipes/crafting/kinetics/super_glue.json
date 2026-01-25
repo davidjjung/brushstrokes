@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:brush"
+    },
+    {
+      "tag": "forge:slimeballs"
+    },
+    {
+      "tag": "forge:slimeballs"
+    },
+    {
+      "tag": "forge:slimeballs"
+    }
+  ],
+  "result": {
+    "item": "create:super_glue"
+  }
+}

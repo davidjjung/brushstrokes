@@ -17,7 +17,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class SelectionHandler {
-
     public SelectionHandler() {
     }
 
@@ -70,6 +69,7 @@ public class SelectionHandler {
 
             Outliner.getInstance().showAABB("wax_brush_selection", box)
                     .colored(color)
+                    .withFaceTextures(OverlayTextures.WAX, OverlayTextures.WAX)
                     .lineWidth(1 / 16f)
                     .disableLineNormals();
 
