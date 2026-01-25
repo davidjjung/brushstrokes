@@ -133,6 +133,8 @@ dependencies {
 
     // EMI
     modRuntimeOnly "dev.emi:emi-forge:${emi_version}"
+    modRuntimeOnly("maven.modrinth:create:yiECLWCs")
+    modCompileOnly("maven.modrinth:create:yiECLWCs")
 
     // Create
     modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
