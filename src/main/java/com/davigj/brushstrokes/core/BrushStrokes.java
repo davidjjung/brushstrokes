@@ -3,9 +3,16 @@ package com.davigj.brushstrokes.core;
 import com.davigj.brushstrokes.client.SelectionHandler;
 import com.davigj.brushstrokes.core.registry.BSCreativePlacements;
 import com.davigj.brushstrokes.core.registry.BSItems;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.data.event.GatherDataEvent;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -26,6 +33,7 @@ public class BrushStrokes {
         BSItems.ITEMS.register(bus);
         bus.addListener(BSCreativePlacements::set);
 
+        bus.addListener(this::addResourcePack);
         bus.addListener(this::commonSetup);
         bus.addListener(this::clientSetup);
         bus.addListener(this::dataSetup);
@@ -46,5 +54,28 @@ public class BrushStrokes {
 
     private void dataSetup(GatherDataEvent event) {
 
+    }
+
+    private void addResourcePack(AddPackFindersEvent event) {
+        if (event.getPackType() == PackType.CLIENT_RESOURCES) {
+            var resourcePath = ModList.get().getModFileById(MOD_ID).getFile().findResource("overrides");
+
+            var packId = "brushstrokes_overrides";
+            var packTitle = Component.literal("Brush Strokes Overrides");
+
+            var packInfo = Pack.readMetaAndCreate(
+                    packId,
+                    packTitle,
+                    true,
+                    (id) -> new PathPackResources(id, resourcePath, true),
+                    PackType.CLIENT_RESOURCES,
+                    Pack.Position.TOP,
+                    PackSource.BUILT_IN
+            );
+
+            if (packInfo != null) {
+                event.addRepositorySource((consumer) -> consumer.accept(packInfo));
+            }
+        }
     }
 }
