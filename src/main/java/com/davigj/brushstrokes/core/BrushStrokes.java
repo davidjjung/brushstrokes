@@ -34,7 +34,7 @@ public class BrushStrokes {
         BSItems.ITEMS.register(bus);
         bus.addListener(BSCreativePlacements::set);
 
-        bus.addListener(this::addResourcePack);
+        bus.addListener(this::addOverridePacks);
         bus.addListener(this::commonSetup);
         bus.addListener(this::clientSetup);
         bus.addListener(this::dataSetup);
@@ -57,7 +57,7 @@ public class BrushStrokes {
 
     }
 
-    private void addResourcePack(AddPackFindersEvent event) {
+    private void addOverridePacks(AddPackFindersEvent event) {
         if (event.getPackType() == PackType.CLIENT_RESOURCES) {
             var resourcePath = ModList.get().getModFileById(MOD_ID).getFile().findResource("overrides");
 
@@ -70,6 +70,26 @@ public class BrushStrokes {
                     true,
                     (id) -> new PathPackResources(id, resourcePath, true),
                     PackType.CLIENT_RESOURCES,
+                    Pack.Position.TOP,
+                    PackSource.BUILT_IN
+            );
+
+            if (packInfo != null) {
+                event.addRepositorySource((consumer) -> consumer.accept(packInfo));
+            }
+        } else if (event.getPackType() == PackType.SERVER_DATA) {
+            var resourcePath = ModList.get().getModFileById(MOD_ID).getFile().findResource("data_overrides");
+
+            var packId = "brushstrokes_data_overrides";
+            var packTitle = Component.literal("Brush Strokes Data Overrides");
+
+
+            var packInfo = Pack.readMetaAndCreate(
+                    packId,
+                    packTitle,
+                    true,
+                    (id) -> new PathPackResources(id, resourcePath, true),
+                    PackType.SERVER_DATA,
                     Pack.Position.TOP,
                     PackSource.BUILT_IN
             );
