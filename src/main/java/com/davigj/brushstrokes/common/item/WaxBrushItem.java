@@ -2,63 +2,75 @@ package com.davigj.brushstrokes.common.item;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.HoneycombItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 public class WaxBrushItem extends Item {
-    private static final String START_POS = "Pos";
     public static final int MAX_WAX_CONVERTS = 1096;
+    private static final String START_POS = "Pos";
 
     public WaxBrushItem(Properties properties) {
         super(properties);
     }
 
     @Override
-    public InteractionResult useOn(UseOnContext ctx) {
+    public @NotNull InteractionResult useOn(UseOnContext ctx) {
         Level level = ctx.getLevel();
         Player player = ctx.getPlayer();
         ItemStack stack = ctx.getItemInHand();
 
-        if (player == null || level.isClientSide)
-            return InteractionResult.SUCCESS;
+        if (player == null) return InteractionResult.FAIL;
 
         BlockPos clickedPos = ctx.getClickedPos();
         CompoundTag tag = stack.getOrCreateTag();
 
         if (!tag.contains(START_POS)) {
             tag.putLong(START_POS, clickedPos.asLong());
+
+            if (level.isClientSide) {
+                player.displayClientMessage(Component.translatable("message.brushstrokes.selection_start"), true);
+            }
             return InteractionResult.SUCCESS;
         }
 
         BlockPos start = BlockPos.of(tag.getLong(START_POS));
+
         tag.remove(START_POS);
 
         if (player.isCrouching()) {
+            if (level.isClientSide) {
+                player.displayClientMessage(Component.translatable("message.brushstrokes.selection_cleared"), true);
+            }
             return InteractionResult.SUCCESS;
         }
 
-        applyWax(level, player, stack, start, clickedPos);
+        if (!level.isClientSide) {
+            applyWax(level, player, stack, start, clickedPos, ctx.getHand());
+        }
+
         return InteractionResult.SUCCESS;
     }
 
-    private void applyWax(Level level, Player player, ItemStack stack, BlockPos start, BlockPos end) {
-        // TODO: maybe make an enum for all the results: boxTooBig, noneTransformed, someTransformedButThenBrushBorked, totalSuccess
+    private void applyWax(Level level, Player player, ItemStack stack, BlockPos start, BlockPos end, InteractionHand hand) {
         AABB box = new AABB(start, end);
-        int volume = (int)((box.maxX - box.minX + 1) * (box.maxY - box.minY + 1) * (box.maxZ - box.minZ + 1));
+        int volume = (int) ((box.maxX - box.minX + 1) * (box.maxY - box.minY + 1) * (box.maxZ - box.minZ + 1));
 
         if (volume > MAX_WAX_CONVERTS) {
-            // TODO: send a message that the box was too big, we couldn't do it, sorry
+            sendFeedback(player, WaxResult.TOO_BIG);
             return;
         }
 
@@ -92,14 +104,29 @@ public class WaxBrushItem extends Item {
         }
 
         if (transformed > 0 && !creative) {
-            stack.hurtAndBreak(transformed, player,
-                    p -> p.broadcastBreakEvent(InteractionHand.MAIN_HAND));
+            stack.hurtAndBreak(transformed, player, p -> {
+                p.broadcastBreakEvent(hand);
+                p.setItemInHand(hand, new ItemStack(Items.BRUSH));
+            });
         }
 
-        // TODO: send to player a msg using the following. transformed == 0 ? boxTooBig : (broken ? someTransformedButThenBrushBorked : totalSuccess)
+        WaxResult result;
+        if (broken) {
+            result = WaxResult.PARTIAL_BROKEN;
+        } else if (transformed > 0) {
+            result = WaxResult.SUCCESS;
+        } else {
+            result = WaxResult.NONE;
+        }
+
+        sendFeedback(player, result);
     }
 
-    public boolean canAttackBlock(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer) {
+    private void sendFeedback(Player player, WaxResult result) {
+        player.displayClientMessage(Component.translatable(result.key), true);
+    }
+
+    public boolean canAttackBlock(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer) {
         return false;
     }
 
@@ -107,8 +134,16 @@ public class WaxBrushItem extends Item {
         return true;
     }
 
-    public static void onBroken(Player player) {
-        // TODO: like, return a brush or smth? idk i just copied this from SuperGlueItem
-        // TODO: that reminds me that using up this/glue brush should just return like. a brush. not just destroying items
+    private enum WaxResult {
+        TOO_BIG("message.brushstrokes.too_big"),
+        NONE("message.brushstrokes.none"),
+        PARTIAL_BROKEN("message.brushstrokes.partial_broken"),
+        SUCCESS("message.brushstrokes.success");
+
+        final String key;
+
+        WaxResult(String key) {
+            this.key = key;
+        }
     }
 }

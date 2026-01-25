@@ -1,4 +1,4 @@
-package com.davigj.brushstrokes.core.other;
+package com.davigj.brushstrokes.core.events;
 
 import com.davigj.brushstrokes.core.BrushStrokes;
 import net.minecraft.client.Minecraft;
@@ -11,7 +11,6 @@ import net.minecraftforge.fml.common.Mod;
 public class BSClientEvents {
     @SubscribeEvent
     public static void onTick(TickEvent.ClientTickEvent event) {
-        // TODO: client tick selection box using SuperGlueSelectionHandler as a base but like. How. Can't access Outliner class bc it doesn't even seem to be a part of the mod ??
         if (isGameActive()) {
             if (event.phase == TickEvent.Phase.END) {
                 BrushStrokes.SELECTION_HANDLER.tick();

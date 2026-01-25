@@ -1,3 +1,12 @@
 {
-  "item.brushstrokes.wax_brush": "Wax Brush"
+  "item.brushstrokes.wax_brush": "Wax Brush",
+  "message.brushstrokes.selection_start": "First position selected",
+  "message.brushstrokes.selection_cleared": "Selection discarded",
+  "message.brushstrokes.too_big": "Selected area is too big",
+  "message.brushstrokes.none": "Nothing happened",
+  "message.brushstrokes.partial_broken": "Brush broke during operation",
+  "message.brushstrokes.success": "Applying Wax...",
+  "message.brushstrokes.waxable_count": "Waxable: %s",
+  "message.brushstrokes.none_waxable": "Nothing to wax",
+  "message.brushstrokes.selection_size": "Size: %s blocks"
 }

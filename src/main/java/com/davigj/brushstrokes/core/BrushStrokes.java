@@ -40,7 +40,6 @@ public class BrushStrokes {
 
     private void clientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
-            // If this is like, Not how it's done, then sue me. Or fix it. Please fix it.
             SELECTION_HANDLER = new SelectionHandler();
         });
     }
