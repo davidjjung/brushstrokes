@@ -1,0 +1,6 @@
+{
+    "pack": {
+        "description": "${mod_name} overrides",
+        "pack_format": 15
+    }
+}
