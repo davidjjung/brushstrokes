@@ -64,6 +64,7 @@ repositories {
         name = 'MinecraftForge'
         url = 'https://maven.minecraftforge.net/'
     }
+    maven { url = "https://maven.createmod.net" }
 }
 
 base {
@@ -134,9 +135,20 @@ dependencies {
     modRuntimeOnly "dev.emi:emi-forge:${emi_version}"
 
     // Create
-    modImplementation "maven.modrinth:create:${create_version}"
+    modCompileOnly("dev.engine-room.flywheel:flywheel-forge-api-${flywheel_minecraft_version}:${flywheel_version}")
+    modRuntimeOnly(jarJar("dev.engine-room.flywheel:flywheel-forge-${flywheel_minecraft_version}:${flywheel_version}") {
+        version {
+            strictly "[1.0,2.0)"
+            prefer flywheel_version
+        }
+    })
+
+    jarJar(modImplementation("net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}"))
+
 }
 
+// Uncomment if you want to add mixins
+/*
 mixin {
     add sourceSets.main, "${mod_id}.refmap.json"
     config "${mod_id}.mixins.json"
@@ -151,8 +163,9 @@ jar {
             "MixinConfigs": "${mod_id}.mixins.json"
     ])
 }
+*/
 
-var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
+tasks.named('processResources', ProcessResources).configure {
     var replaceProperties = [
             minecraft_version      : minecraft_version,
             minecraft_version_range: minecraft_version_range,
@@ -167,13 +180,11 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_description        : mod_description
     ]
     inputs.properties replaceProperties
-    expand replaceProperties
-    from "src/main/templates"
-    into "build/generated/sources/modMetadata"
-}
 
-sourceSets.main.resources.srcDir generateModMetadata
-legacyForge.ideSyncTask generateModMetadata
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
 
 publishing {
     publications {
