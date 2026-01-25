@@ -14,19 +14,16 @@ public class BSItems {
     public static final DeferredRegister<Item> ITEMS;
     public static final RegistryObject<Item> WAX_BRUSH;
 
+    static {
+        ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, BrushStrokes.MOD_ID);
+        WAX_BRUSH = register("wax_brush", () -> new WaxBrushItem(new Item.Properties().stacksTo(1).durability(200)));
+    }
+
     public BSItems() {
     }
 
     public static RegistryObject<Item> register(String name, Supplier<Item> supplier) {
-        RegistryObject<Item> item = ITEMS.register(name, supplier);
-        return item;
-    }
-
-    static {
-        ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, BrushStrokes.MOD_ID);
-        WAX_BRUSH = register("wax_brush", () -> {
-            return new WaxBrushItem(new Item.Properties().stacksTo(1).durability(200));
-        });
+        return ITEMS.register(name, supplier);
     }
 
 }
