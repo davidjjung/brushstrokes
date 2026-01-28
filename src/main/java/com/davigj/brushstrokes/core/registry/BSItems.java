@@ -16,7 +16,7 @@ public class BSItems {
 
     static {
         ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, BrushStrokes.MOD_ID);
-        WAX_BRUSH = register("wax_brush", () -> new WaxBrushItem(new Item.Properties().stacksTo(1).durability(200)));
+        WAX_BRUSH = register("wax_brush", () -> new WaxBrushItem(new Item.Properties().stacksTo(1).durability(99)));
     }
 
     public BSItems() {

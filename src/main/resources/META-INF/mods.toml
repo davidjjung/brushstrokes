@@ -11,7 +11,7 @@ logoFile = "logo.png"
 itemIcon = "create:super_glue"
 configBackground = "minecraft:textures/block/dirt.png"
 authors="${mod_authors}"
-credits = "asof"
+credits = "asof, noelle, kayla_the_bee"
 displayURL = ""
 description='''${mod_description}'''
 
